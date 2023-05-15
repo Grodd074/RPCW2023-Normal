@@ -1,0 +1,27 @@
+1.1 Setup
+    Não fiz alterações ao dataset
+
+    Para importar o dataset para a base de dados
+    -> mongoimport -d scienceJobs -c contracts --file emprego-cientifico.json --jsonArray 
+    
+    Para testar o sucesso da importação:db.
+    -> db.contracts.count()
+
+1.2 Queries (warm-up)
+    Primeiro naveguei para dentro da db "scienceJobs" com:
+        -> use scienceJobs
+
+    1. Quantos contratos estão na base de dados;
+        -> db.contracts.count()
+
+    2. Quantos contratos foram realizados pela Universidade do Minho?
+        -> db.contracts.find({"NomeInstituicao": {$regex:"Minho"}}).count()
+
+    3. Qual a lista das áreas das pessoas contratadas (ordenada alfabeticamente e sem repetições)? (AreaCNAEF)
+        -> db.contracts.distinct("AreaCNAEF").sort()
+
+    4. Qual a distribuição por ano dos contratos? (quantos contratos em cada ano)
+        -> db.contracts.aggregate([{$group:{_id: {$substr:["$DataInicioContrato",6,10]} ,count:{$sum:1}}}])
+
+    5. Qual a distribuição dos contratos por instituição?
+        -> db.contracts.aggregate([{$group:{_id:"$NomeInstituicao",count:{$sum:1}}}])
